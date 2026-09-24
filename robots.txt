@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://foodfolio.ie/sitemap.xml

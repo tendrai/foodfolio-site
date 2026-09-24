@@ -1,0 +1,297 @@
+/* The Walk. One typeface (the site's Inter), two weights. Navy for headings and numbers, grey for labels,
+   the three state colours as dots only. No gradients, no glow, no resting shadows. */
+
+.walk {
+  --walk-navy: #0F1A33;
+  --walk-grey: #6B7280;
+  --walk-line: #E0E6ED;
+  --walk-pass: #4CAF50;
+  --walk-week: #FFC107;
+  --walk-today: #F44336;
+  --walk-font: Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --walk-scale: 1;
+  position: relative;
+  font-family: var(--walk-font);
+  color: var(--walk-navy);
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Frame. Row mode: a 1200 x 260 design frame scaled to the container with a transform. */
+.walk-frame {
+  position: relative;
+  box-sizing: border-box;
+  background: #ffffff;
+  border: 1px solid var(--walk-line);
+  border-radius: 14px;
+  padding: 22px 28px 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.walk[data-mode="row"] .walk-frame {
+  width: 1200px;
+  height: 260px;
+  transform: scale(var(--walk-scale));
+  transform-origin: 0 0;
+}
+.walk[data-mode="row"] .walk-scaler {
+  height: calc(260px * var(--walk-scale));
+  overflow: hidden;
+}
+.walk[data-mode="grid"] .walk-frame,
+.walk[data-mode="list"] .walk-frame {
+  width: 100%;
+  height: auto;
+  transform: none;
+}
+.walk[data-mode="list"] .walk-frame {
+  padding: 18px 16px 16px 16px;
+}
+
+/* Header */
+.walk-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+.walk-titles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.walk-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  color: var(--walk-navy);
+}
+.walk-sub {
+  position: relative;
+  height: 18px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 18px;
+  color: var(--walk-grey);
+}
+.walk-sub span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  transition: opacity 600ms ease;
+}
+.walk-sub .walk-sub-count { opacity: 0; color: var(--walk-navy); }
+.walk[data-phase="done"] .walk-sub .walk-sub-rest { opacity: 0; }
+.walk[data-phase="done"] .walk-sub .walk-sub-count { opacity: 1; }
+.walk[data-mode="list"] .walk-sub { height: auto; }
+.walk[data-mode="list"] .walk-sub span { position: static; display: block; white-space: normal; }
+.walk[data-mode="list"] .walk-sub .walk-sub-count { display: none; }
+.walk[data-mode="list"][data-phase="done"] .walk-sub .walk-sub-rest { display: none; opacity: 1; }
+.walk[data-mode="list"][data-phase="done"] .walk-sub .walk-sub-count { display: block; }
+
+.walk-key {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex: 0 0 auto;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--walk-grey);
+  white-space: nowrap;
+}
+.walk-key span { display: inline-flex; align-items: center; gap: 6px; }
+
+/* Dots: the only colour on the band */
+.walk-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  flex: 0 0 auto;
+  background: var(--walk-grey);
+}
+.walk-dot[data-state="pass"] { background: var(--walk-pass); }
+.walk-dot[data-state="week"] { background: var(--walk-week); }
+.walk-dot[data-state="today"] { background: var(--walk-today); }
+
+/* Route: points laid out by CSS, the path drawn over them by SVG from measured node centres */
+.walk-route {
+  position: relative;
+  flex-grow: 1;
+}
+.walk-path {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.walk-seg-rest {
+  fill: none;
+  stroke: var(--walk-line);
+  stroke-width: 1.5;
+  stroke-dasharray: 4 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.walk-seg-lit {
+  fill: none;
+  stroke: var(--walk-navy);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 1;
+  transition: stroke-dashoffset 500ms ease-out, opacity 900ms ease;
+}
+.walk-seg-lit[data-drawn="true"] { stroke-dashoffset: 0; }
+.walk[data-phase="fade"] .walk-seg-lit { opacity: 0; }
+
+/* Points */
+.walk-points {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  column-gap: 12px;
+}
+.walk[data-mode="grid"] .walk-points {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  row-gap: 30px;
+  column-gap: 16px;
+}
+.walk[data-mode="list"] .walk-points {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.walk-point {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  min-width: 0;
+}
+.walk-icon {
+  width: 40px;
+  height: 28px;
+  display: block;
+  fill: none;
+  stroke: var(--walk-navy);
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.4;
+  transition: opacity 400ms ease;
+}
+.walk-node {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--walk-navy);
+  color: #ffffff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 24px;
+  text-align: center;
+  opacity: 0.4;
+  box-shadow: 0 0 0 0 rgba(15, 26, 51, 0);
+  transition: opacity 400ms ease, box-shadow 500ms ease;
+}
+.walk-point[data-lit="true"] .walk-icon,
+.walk-point[data-lit="true"] .walk-node { opacity: 1; }
+.walk-point[data-ring="true"] .walk-node { box-shadow: 0 0 0 6px rgba(15, 26, 51, 0.12); }
+.walk-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--walk-grey);
+  line-height: 1.2;
+}
+.walk-reading {
+  hyphens: none;
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.3;
+  color: var(--walk-navy);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 400ms ease-out, transform 400ms ease-out;
+}
+.walk-reading .walk-dot { margin-top: 5px; }
+.walk-point[data-shown="true"] .walk-reading { opacity: 1; transform: translateY(0); }
+.walk[data-phase="fade"] .walk-reading { opacity: 0; transform: translateY(8px); transition-duration: 800ms; }
+
+/* Fade: back towards rest while the icons stay put */
+.walk[data-phase="fade"] .walk-point .walk-node,
+.walk[data-phase="fade"] .walk-point .walk-icon { opacity: 0.4; transition-duration: 800ms; }
+
+/* Done: the two red findings hold full strength, passes settle */
+.walk[data-phase="done"] .walk-point[data-state="pass"] .walk-reading,
+.walk[data-phase="done"] .walk-point[data-state="pass"] .walk-node,
+.walk[data-phase="done"] .walk-point[data-state="pass"] .walk-icon { opacity: 0.7; }
+
+/* One pulse on a red dot. Keyframe has only a from, so a later class still wins. */
+@keyframes walk-pulse {
+  from { transform: scale(1.6); box-shadow: 0 0 0 0 rgba(244, 67, 54, 0.45); }
+}
+.walk-dot[data-pulse="true"] { animation: walk-pulse 700ms ease-out 1; }
+
+/* List mode (under 600 px): node at the left, path as a vertical dashed line */
+.walk[data-mode="list"] .walk-head { flex-direction: column; gap: 10px; }
+.walk[data-mode="list"] .walk-point {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  column-gap: 14px;
+  align-items: start;
+}
+.walk[data-mode="list"] .walk-node { grid-row: 1 / span 3; }
+.walk[data-mode="list"] .walk-icon { width: 36px; height: 25px; }
+.walk[data-mode="list"] .walk-label { font-size: 11px; }
+.walk[data-mode="list"] .walk-reading { font-size: 15px; }
+
+/* Seeking: apply a state instantly (previews, reduced motion, loop seam) */
+.walk.is-seeking *,
+.walk.is-seeking *::before,
+.walk.is-seeking *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Control, outside the scaled frame */
+.walk-control {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+}
+.walk-pause {
+  appearance: none;
+  border: 1px solid var(--walk-line);
+  background: #ffffff;
+  color: var(--walk-grey);
+  font: 500 12px/1 var(--walk-font);
+  border-radius: 6px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 12px;
+  cursor: pointer;
+}
+.walk-pause:hover, .walk-pause:focus-visible { color: var(--walk-navy); border-color: var(--walk-navy); outline: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .walk * { transition: none !important; animation: none !important; }
+}
