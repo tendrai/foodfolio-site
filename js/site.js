@@ -29,6 +29,11 @@
   var em = $('cta-email');
   if (em && C.email) { em.setAttribute('href', 'mailto:' + C.email + '?subject=Mock%20inspection%20booking'); em.textContent = 'Email ' + C.email; }
   show(em, !!C.email);
+  // With no booking link yet, the first contact button becomes the main one.
+  if (!C.bookingUrl) {
+    var first = C.whatsapp ? wa : (C.email ? em : null);
+    if (first) { first.classList.remove('ghost'); first.classList.add('white'); }
+  }
 
   var ph = $('cta-phone');
   if (ph && C.phone && !C.whatsapp) { ph.innerHTML = 'Or call <a href="tel:' + C.phone.replace(/\s+/g, '') + '">' + C.phone + '</a>'; show(ph, true); }

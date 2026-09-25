@@ -9,7 +9,7 @@ window.FOODFOLIO = {
   whatsapp: '',
 
   // Contact email shown in the footer and on the "Email us" button. Example: 'hello@foodfolio.ie'
-  email: '',
+  email: 'hello@foodfolio.ie',
 
   // Phone number as you want it displayed. Example: '087 123 4567'
   phone: '',
